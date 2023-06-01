@@ -1,0 +1,12 @@
+{
+  "name": "yetanotherrhythmgamelauncher",
+  "version": "0.1",
+  "license": "MIT",
+  "scripts": {
+    "dev:operational": "tsx watch operational/index.ts"
+  },
+  "devDependencies": {
+    "tsx": "^3.12.7",
+    "typescript": "^5.0.4"
+  }
+}
