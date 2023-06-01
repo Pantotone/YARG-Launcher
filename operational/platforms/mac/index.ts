@@ -4,12 +4,18 @@ export class MacPlatform implements IPlatform {
     constructor() {
         
     }
+
+    gameExecutableName = "YARG.app/Contents/MacOS/YARG";
+
+    run(path: string): void {
+        throw new Error("Method not implemented.");
+    }
     
     getTemporaryFolderPath(): string {
         throw new Error("Method not implemented.");
     }
 
-    getMainFolderPath(): string {
+    getGameFolderPath(): string {
         throw new Error("Method not implemented.");
     }
 

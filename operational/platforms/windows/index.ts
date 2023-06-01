@@ -5,11 +5,17 @@ export class WindowsPlatform implements IPlatform {
         
     }
 
+    gameExecutableName = "YARG.exe";
+
+    run(path: string): void {
+        throw new Error("Method not implemented.");
+    }
+
     getTemporaryFolderPath(): string {
         throw new Error("Method not implemented.");
     }
 
-    getMainFolderPath(): string {
+    getGameFolderPath(): string {
         throw new Error("Method not implemented.");
     }
 
