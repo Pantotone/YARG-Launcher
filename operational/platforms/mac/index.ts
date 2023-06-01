@@ -5,6 +5,7 @@ export class MacPlatform implements IPlatform {
         
     }
 
+    name = "mac";
     gameExecutableName = "YARG.app/Contents/MacOS/YARG";
 
     run(path: string): void {

@@ -5,6 +5,7 @@ export class WindowsPlatform implements IPlatform {
         
     }
 
+    name = "windows";
     gameExecutableName = "YARG.exe";
 
     run(path: string): void {

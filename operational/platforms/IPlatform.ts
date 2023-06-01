@@ -1,4 +1,5 @@
 export interface IPlatform {
+    name: string,
     gameExecutableName: string,
 
     getTemporaryFolderPath(): string,

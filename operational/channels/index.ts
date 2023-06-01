@@ -1,6 +1,7 @@
 import { IPlatform } from "operational/platforms/IPlatform";
 import fs from 'fs';
 import path from 'path';
+import api from "operational/api";
 
 class BaseChannel {
     name: string;
@@ -27,8 +28,16 @@ class BaseChannel {
         return this.os.run(gameExecutablePath);
     }
 
-    checkUpdate() {
+    async checkUpdate() {
+        const update = await api.getLatestUpdate(this.name, this.os.name);
+        const versionFolder = path.join(this.folder, update.version);
 
+        try {
+            await fs.promises.access(versionFolder);
+            return false;
+        } catch (error) {
+            return true;
+        }
     }
 
     downloadLatest() {

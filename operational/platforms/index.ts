@@ -1,4 +1,4 @@
-import Constants from "utils/Contants";
+import Constants from "utils/Constants";
 
 import { IPlatform } from "./IPlatform";
 import { MacPlatform } from "./mac";
