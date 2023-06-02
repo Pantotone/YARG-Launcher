@@ -1,8 +1,18 @@
 import { IPlatform } from "operational/platforms/IPlatform";
 
 export class WindowsPlatform implements IPlatform {
-    constructor() {
+    private static instance: IPlatform;
+
+    private constructor() {
         
+    }
+
+    public static getInstance(): IPlatform {
+        if(!this.instance) {
+            this.instance = new this();
+        }
+
+        return this.instance;
     }
 
     name = "windows";
