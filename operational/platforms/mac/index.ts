@@ -1,5 +1,7 @@
 import { IPlatform } from "operational/platforms/IPlatform";
-
+import os from 'os';
+import fs from 'fs';
+import path from "path";
 export class MacPlatform implements IPlatform {
     private static instance: IPlatform;
 
@@ -23,11 +25,19 @@ export class MacPlatform implements IPlatform {
     }
     
     getTemporaryFolderPath(): string {
-        throw new Error("Method not implemented.");
+        const tempPath = path.join(os.tmpdir(), "YARG");
+
+        fs.access(tempPath, (err) => {
+            if(err) { 
+                fs.mkdirSync(tempPath)
+            };
+        });
+
+        return tempPath;
     }
 
     getGameFolderPath(): string {
-        throw new Error("Method not implemented.");
+        return "/Applications/YARG/Game/";
     }
 
     getDataFolderPath(): string {

@@ -2,21 +2,15 @@ import { IPlatform } from "operational/platforms/IPlatform";
 import fs from 'fs';
 import path from 'path';
 import api from "operational/api";
+import { getPlatform } from "operational/platforms";
+import { Downloader } from "utils/DownloadManager";
 
-class BaseChannel {
+class Channel {
     name: string;
-    os: IPlatform;
+    os: IPlatform = getPlatform();
 
-    constructor(name: string, os: IPlatform) {
+    constructor(name: string) {
         this.name = name;
-        this.os = os;
-
-        // Create the channel folder in case it doesn't exist
-        fs.access(this.folder, err => {
-            if(err) {
-                fs.mkdir(this.folder, err => console.error(err));
-            };
-        });
     }
 
     get folder(): string {
@@ -40,9 +34,17 @@ class BaseChannel {
         }
     }
 
-    downloadLatest() {
+    async downloadLatest() {
+        const update = await api.getLatestUpdate(this.name, this.os.name);
+        const versionFolder = path.join(this.folder, update.version);
 
+        const download = new Downloader(update.files, versionFolder);
+        
+        download.onError(() => console.log("oopsies theres an error ;PPP"))
+        download.onUpdate((info) => { console.log(`Downloader: ${info.received}/${info.total} bytes (${ (info.received/info.total) * 100 }%)`); })
+        download.onFinish(() => console.log("Finished download"))
+        return await download.start();
     }
 };
 
-export default BaseChannel;
+export default Channel;

@@ -6,6 +6,7 @@
     "dev:operational": "tsx watch operational/index.ts"
   },
   "devDependencies": {
+    "@types/follow-redirects": "^1.14.1",
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "eslint": "^8.0.1",
@@ -16,5 +17,8 @@
     "eslint-plugin-react": "^7.32.2",
     "tsx": "^3.12.7",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "follow-redirects": "^1.15.2"
   }
 }
