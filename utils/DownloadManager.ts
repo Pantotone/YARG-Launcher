@@ -5,6 +5,7 @@ import { https } from 'follow-redirects';
 import { IPlatform } from "operational/platforms/IPlatform";
 import { getPlatform } from "operational/platforms";
 import Listener from "./EventListener";
+import { uncompress } from "./Uncompress";
 
 type UpdateCallback = {
     total: number,
@@ -77,14 +78,18 @@ class Downloader {
             stream.on("finish", () => {
                 if(res.complete) {
                     stream.close();
-                    this.postFileDownload(file);
+                    this.postFileDownload(file, stream);
                 }
             });
         });
     }
 
-    async postFileDownload(file: UpdateDownload) {
+    async postFileDownload(file: UpdateDownload, stream: fs.WriteStream) {
         console.log(`Finished download file ${URLtoFileName(file.downloadURL)}`);
+
+        if(file.uncompress) {
+            await uncompress(stream.path as string, this.destination);
+        }
 
         if(this.received >= this.total) {
             this.finishListener.trigger(null);
