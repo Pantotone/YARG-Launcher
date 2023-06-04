@@ -4,6 +4,12 @@ import path from 'path';
 import api from "operational/api";
 import { getPlatform } from "operational/platforms";
 import { Downloader } from "utils/DownloadManager";
+import { readJSON } from "fs-extra";
+
+type ChannelSettings = {
+    selectedVersion?: string,
+    autoDeleteOlderVersions?: boolean
+};
 
 class Channel {
     name: string;
@@ -17,12 +23,24 @@ class Channel {
         return path.join(this.os.getGameFolderPath(), this.name);
     }
 
+    get settingsPath(): string {
+        return path.join(this.folder + "/settings.json")
+    }
+
+    async currentVersion(): Promise<string | undefined> {
+        return (await this.getSettings()).selectedVersion
+    }
+
+    async getSettings(): Promise<ChannelSettings> {
+        return readJSON(this.settingsPath);
+    }
+
     startGame(version: string): void {
         const gameExecutablePath = path.join(this.folder, version, this.os.gameExecutableName);
         return this.os.run(gameExecutablePath);
     }
 
-    async checkUpdate() {
+    async checkNewUpdate() {
         const update = await api.getUpdate(this.name, this.os.name, "latest");
         return this.checkVersionInstalled(update.version);
     }
