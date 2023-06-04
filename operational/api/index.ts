@@ -16,10 +16,14 @@ type Update = {
     files: UpdateDownload[],
 };
 
-async function getLatestUpdate(channelName: string, platform: string): Promise<Update> {
-    const update = await apiCall(`${channelName}/${platform}.json`);
+async function getAllUpdates(channelName: string, platform: string) {
+    throw new Error("Not implemented yet.");
+}
+
+async function getUpdate(channelName: string, platform: string, version: string = "latest"): Promise<Update> {
+    const update = await apiCall(`${channelName}/${version}/${platform}.json`);
     return update;
 }
 
-export default { getLatestUpdate };
+export default { getUpdate, getAllUpdates };
 export type { UpdateDownload };

@@ -23,8 +23,12 @@ class Channel {
     }
 
     async checkUpdate() {
-        const update = await api.getLatestUpdate(this.name, this.os.name);
-        const versionFolder = path.join(this.folder, update.version);
+        const update = await api.getUpdate(this.name, this.os.name, "latest");
+        return this.checkVersionInstalled(update.version);
+    }
+
+    async checkVersionInstalled(version: string) {
+        const versionFolder = path.join(this.folder, version);
 
         try {
             await fs.promises.access(versionFolder);
@@ -34,8 +38,8 @@ class Channel {
         }
     }
 
-    async downloadLatest() {
-        const update = await api.getLatestUpdate(this.name, this.os.name);
+    async downloadVersion(version: string = "latest") {
+        const update = await api.getUpdate(this.name, this.os.name, version);
         const versionFolder = path.join(this.folder, update.version);
 
         const download = new Downloader(update.files, versionFolder);
