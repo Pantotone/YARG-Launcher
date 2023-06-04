@@ -1,5 +1,6 @@
 import type { UpdateDownload } from "operational/api";
 import fs from 'fs';
+import fse from 'fs-extra';
 import path from 'path';
 import { https } from 'follow-redirects';
 import { IPlatform } from "operational/platforms/IPlatform";
@@ -89,6 +90,8 @@ class Downloader {
 
         if(file.uncompress) {
             await uncompress(stream.path as string, this.destination);
+        } else {
+            await fse.move(stream.path as string, this.destination)
         }
 
         if(this.received >= this.total) {
