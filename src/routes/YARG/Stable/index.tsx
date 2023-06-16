@@ -1,3 +1,4 @@
+import { PlayStates, usePlayYARG } from "@app/hooks/usePlayYARG";
 import { useYARGRelease, getYARGReleaseZip } from "@app/hooks/useReleases";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useState } from "react";
@@ -5,6 +6,7 @@ import { useState } from "react";
 function StableYARGPage() {
     const [debugMsg, setDebugMsg] = useState("");
     const releaseData = useYARGRelease("stable");
+    const { state, play } = usePlayYARG(releaseData.tag_name);
 
     async function download(version: string) {
         try {
@@ -25,20 +27,6 @@ function StableYARGPage() {
         }
     };
 
-    async function play(version: string) {
-        try {
-            setDebugMsg("Loading...");
-
-            await invoke("play_yarg", {
-                versionId: version
-            });
-
-            setDebugMsg("Done!");
-        } catch (e) {
-            setDebugMsg(`FAILED: ${e}`);
-        }
-    }
-
     return (<>
 
         <h1>YARG stable version page</h1>
@@ -48,8 +36,16 @@ function StableYARGPage() {
 
         <p>Current version: {releaseData?.tag_name}</p>
 
+        { 
+            state === PlayStates.CLOSED ? "Closed game" :
+            state === PlayStates.ERROR ? "Error loading game" :
+            state === PlayStates.LOADING ? "Loading game" :
+            state === PlayStates.PLAYING ? "Playing" : 
+            "State not defined"
+        }
+
         {
-            releaseData ? <button onClick={() => play(releaseData?.tag_name)}>Play YARG stable {releaseData?.tag_name}</button> : ""
+            releaseData ? <button onClick={() => play()}>Play YARG stable {releaseData?.tag_name}</button> : ""
         }
 
         <div>
