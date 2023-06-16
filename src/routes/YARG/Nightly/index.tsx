@@ -1,46 +1,25 @@
 import { PlayStates, usePlayYARG } from "@app/hooks/usePlayYARG";
-import { useYARGRelease, getYARGReleaseZip } from "@app/hooks/useReleases";
-import { invoke } from "@tauri-apps/api/tauri";
-import { useState } from "react";
+import { useYARGRelease } from "@app/hooks/useReleases";
+import { DownloadStates, useDownloadYARG } from "@app/hooks/useDownloadYARG";
 
 function NightlyYARGPage() {
-    const [debugMsg, setDebugMsg] = useState("");
     const releaseData = useYARGRelease("nightly");
-    const { state, play } = usePlayYARG(releaseData.tag_name);
 
-    async function download(version: string) {
-        try {
-            setDebugMsg("Loading...");
-
-            // Get the zip url
-            let zipUrl = await getYARGReleaseZip(releaseData);
-
-            // Download it
-            await invoke("download_yarg", {
-                zipUrl: zipUrl,
-                versionId: version
-            });
-
-            setDebugMsg("Done!");
-        } catch (e) {
-            setDebugMsg(`FAILED: ${e}`);
-        }
-    };
+    const { state: playState, play } = usePlayYARG(releaseData.tag_name);
+    const { state: downloadState, download } = useDownloadYARG(releaseData);
 
     return (<>
 
         <h1>YARG nightly version page</h1>
         <p>this page is on /src/routes/YARG/nightly/index.tsx</p>
 
-        <p>Debug message: {debugMsg}</p>
-
         <p>Current version: {releaseData?.tag_name}</p>
         
         { 
-            state === PlayStates.CLOSED ? "Closed game" :
-            state === PlayStates.ERROR ? "Error loading game" :
-            state === PlayStates.LOADING ? "Loading game" :
-            state === PlayStates.PLAYING ? "Playing" : 
+            playState === PlayStates.CLOSED ? "Closed game" :
+            playState === PlayStates.ERROR ? "Error loading game, check the logs on dev tools" :
+            playState === PlayStates.LOADING ? "Loading game" :
+            playState === PlayStates.PLAYING ? "Playing" : 
             "State not defined"
         }
         
@@ -48,8 +27,15 @@ function NightlyYARGPage() {
             releaseData ? <button onClick={() => play()}>Play YARG nightly {releaseData?.tag_name}</button> : ""
         }
 
+        {
+            downloadState === DownloadStates.DOWNLOADING ? "Downloading game" :
+            downloadState === DownloadStates.DOWNLOADED ? "Finished download" :
+            downloadState === DownloadStates.ERROR ? "Error downloading game, check the logs on dev tools" : 
+            "State not defined"
+        }
+
         <div>
-            <button onClick={() => download(releaseData.tag_name)}>Download Release</button>
+            <button onClick={() => download()}>Download Release</button>
         </div>
 
     </>);
